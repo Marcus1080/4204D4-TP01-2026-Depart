@@ -15,7 +15,7 @@ services:
     ports:
       - "${DOCKMON_PORT}:443" 
     environment:
-      - TZ: "${TZ}" 
+      - TZ=${TZ} 
     volumes:
       - dockmon_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
