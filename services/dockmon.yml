@@ -13,9 +13,9 @@ services:
     container_name: dockmon
     restart: unless-stopped
     ports:
-      - "8001:443"
+      - "${DOCKMON_PORT}:443" 
     environment:
-      - TZ=America/New_York
+      - TZ: "${TZ}" 
     volumes:
       - dockmon_data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock

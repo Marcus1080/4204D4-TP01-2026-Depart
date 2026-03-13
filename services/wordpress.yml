@@ -3,17 +3,17 @@
 # Pour l'accès à la BD et la configuration de WordPress
 # WordPress et phpmyadmin dépendent de la base de données MariaDB
 # Le réseau reseauWP est utilisé pour isoler les services WordPress, phpmyadmin et MariaDB
-services:
 
+services:
   mariadb:
     image: mariadb:latest
     container_name: mariadb
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: rootpassword
-      MARIADB_DATABASE: wordpress
-      MARIADB_USER: wpuser
-      MARIADB_PASSWORD: wppassword
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
     networks:
@@ -27,11 +27,11 @@ services:
       - mariadb
     environment:
       WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_USER: wpuser
-      WORDPRESS_DB_PASSWORD: wppassword
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${WP_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_PASSWORD}
+      WORDPRESS_DB_NAME: ${WP_DB_NAME}
     ports:
-      - "8000:80"
+      - "${WORDPRESS_PORT}:80"
     volumes:
       - wordpress_data:/var/www/html
     networks:
@@ -47,7 +47,7 @@ services:
       PMA_HOST: mariadb
       PMA_PORT: 3306
     ports:
-      - "8080:80"
+      - "${PHPMYADMIN_PORT}:80"
     networks:
       - reseauWP
 
