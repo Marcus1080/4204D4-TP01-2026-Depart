@@ -6,113 +6,244 @@
 # ----------------------------------------------------------------------------------------------
 # Gabarit de départ pour l'initialisation de la configuration du service Homepage
 # ----------------------------------------------------------------------------------------------
-# Mise à jour par: ()
-# Date de mise à jour: ()
-# Description de la mise à jour:  
+# Mise à jour par: (Marcus Asfaw)
+# Date de mise à jour: (2026-03-13)
+# Description de la mise à jour: Le fichier init-dashboard ici sert à initialiser la configuration de base pour le service Homepage.
+# Il crée les fichiers de configuration nécessaires tels que services.yaml, widgets.yaml, settings.yaml, docker.yaml et bookmarks.yaml 
+# ces fichiers contiennent les paramètres et les liens pour les différents service 
+# Pas besoin de remplir les fichiers services.yml ou settings.yml etc. Parce que le ini-dashboard crée tout dans un fichier!!
 # ----------------------------------------------------------------------------------------------
 
 services:
-# Service d'initialisation de la configuration du service Homepage
-  # Des exemples:
-  # https://github.com/epoch-philosophy/homepage-example
-  # Pour les icones: https://github.com/homarr-labs/dashboard-icons/tree/main/png
-
   homepage-init:
     image: alpine:latest
     container_name: homepage-init
     environment:
       - HOST_IP=${HOST_IP}
-
+      - DNS_IP=${DNS_IP}
+      - PIHOLE_PASSWORD=${PIHOLE_PASSWORD}
+      - PIHOLE_HTTP_PORT=${PIHOLE_HTTP_PORT}
+      - NGINX_PORT=${NGINX_PORT}
+      - WORDPRESS_PORT=${WORDPRESS_PORT}
+      - PHPMYADMIN_PORT=${PHPMYADMIN_PORT}
+      - ARCANE_PORT=${ARCANE_PORT}
+      - PORTAINER_HTTP_PORT=${PORTAINER_HTTP_PORT}
+      - UPTIMEKUMA_PORT=${UPTIMEKUMA_PORT}
+      - DOCKMON_PORT=${DOCKMON_PORT}
+      - METEO_VILLE=${METEO_VILLE}
+      - METEO_LAT=${METEO_LAT}
+      - METEO_LONG=${METEO_LONG}
+      - URL_PHOTO=${URL_PHOTO}
+      - PORTEFEUILLE_ACTIONS=${PORTEFEUILLE_ACTIONS}
+ 
     volumes:
       - ../volumes/homepage-config:/data
     command: |
       sh -c "
-      echo 'Configuration du menu Homepage...' 
+      echo 'Configuration du menu Homepage...'
       mkdir -p /data
-      # ###########################################################
-      # Fichier de configuration des services
-      # ###########################################################
-      cat > /data/services.yaml << 'EOF'
+ 
+       # ---------------------------------------------------------------------------
+      # SERVICES.yaml
+      # ---------------------------------------------------------------------------
+      cat > /data/services.yaml << EOF
       ---
       - Applications du projet:
-
+ 
           - Alpine:
               icon: beef.png
-              description: Utilise pihole comme DNS pour tester les filtres de blocage
-
+              description: Utilise pihole comme DNS pour tester les filtres de blockage
+              server: my-docker
+              container: alpine
+ 
           - Accès à PiHole:
-              # https://gethomepage.dev/widgets/services/pihole/
               icon: pi-hole.png
-              href: https://${HOST_IP}/admin
+              href: http://${HOST_IP}:${PIHOLE_HTTP_PORT}/admin
               description: Interface d'administration PiHole
-              server: my-docker # The docker server that was configured
-              container: pihole # The name of the container you'd like to connect
-              showStats: true 
-              target: _self 
-
+              server: my-docker
+              container: pihole
+              showStats: true
+              target: _self
               widget:
                 type: pihole
-                # Communication de conteneur à conteneur via le nom du service
-                # Voir la note dans le service pihole
-                url: https://${DNS_IP}
+                url: http://${DNS_IP}
                 version: 6
-                # Il faut fournir un token API pour accéder aux statistiques
-                # Voir dans l'application Pi-hole: Settings > API / Web interface 
-                key: ${PIHOLE_PASSWORD:-password} # password ou app password
-
+                key: ${PIHOLE_PASSWORD}
+ 
+          - Nginx:
+              icon: nginx.png
+              href: http://${HOST_IP}:${NGINX_PORT}
+              description: Serveur web reverse proxy
+              server: my-docker
+              container: nginx
+ 
+          - WordPress:
+              icon: wordpress.png
+              href: http://${HOST_IP}:${WORDPRESS_PORT}
+              description: Mon site WordPress
+              server: my-docker
+              container: wordpress
+ 
+          - PhpMyAdmin:
+              icon: phpmyadmin.png
+              href: http://${HOST_IP}:${PHPMYADMIN_PORT}
+              description: Gestion base de données
+              server: my-docker
+              container: phpmyadmin
+ 
+          - Radarr:
+              icon: radarr.png
+              href: http://${HOST_IP}:7878
+              description: Gestion de films
+              server: my-docker
+              container: radarr
+ 
+          - qBittorrent:
+              icon: qbittorrent.png
+              href: http://${HOST_IP}:8080
+              description: Téléchargement torrents
+              server: my-docker
+              container: qbittorrent
+ 
+          - Arcane:
+              icon: mdi-magic-staff
+              href: http://${HOST_IP}:${ARCANE_PORT}
+              description: Gestion de conteneurs Arcane
+              server: my-docker
+              container: arcane
+ 
+      - Gestion des conteneurs:
+ 
+          - Portainer:
+              icon: portainer.png
+              href: http://${HOST_IP}:${PORTAINER_HTTP_PORT}
+              description: Gestion Docker
+              server: my-docker
+              container: portainer
+              widget:
+                type: portainer
+                url: http://portainer:9000
+                env: 1
+                key: VOTRE_API_KEY_PORTAINER
+ 
+          - Uptime Kuma:
+              icon: uptime-kuma.png
+              href: http://${HOST_IP}:${UPTIMEKUMA_PORT}
+              description: Monitoring des services
+              server: my-docker
+              container: uptime-kuma
+              widget:
+                type: uptimekuma
+                url: http://uptime-kuma:3001
+                slug: monitorname
+ 
+          - Dockmon:
+              icon: docker.png
+              href: https://${HOST_IP}:${DOCKMON_PORT}
+              description: Monitoring Docker
+              server: my-docker
+              container: dockmon
+ 
+ 
       EOF
-      # FIN DU FICHIER services.yaml
+      # FIN services.yaml
       # ---------------------------------------------------------------------------
-
-      # ###########################################################
-      # Fichier de configuration de l'application Homepage
-      # Référence: https://gethomepage.dev/configs/settings/
-      # ###########################################################
-      cat > /data/settings.yaml << 'EOF'
+ 
+      # ---------------------------------------------------------------------------
+      # WIDGETS.yaml
+      # ---------------------------------------------------------------------------
+      cat > /data/widgets.yaml << EOF
       ---
-
+      - logo:
+          icon: ${URL_PHOTO}
+ 
+      - datetime:
+          text_size: xl
+          format:
+            dateStyle: long
+            timeStyle: short
+            hour12: false
+            locale: fr-CA
+ 
+      - openweathermap:
+          label: ${METEO_VILLE}
+          latitude: ${METEO_LAT}
+          longitude: ${METEO_LONG}
+          units: metric
+          provider: openweathermap
+          apiKey: VOTRE_CLE_OPENWEATHERMAP
+ 
+      - stocks:
+          provider: finnhub
+          apiKey: VOTRE_CLE_FINNHUB
+          symbols:
+            - symbol: AAPL
+              name: Apple
+            - symbol: MSFT
+              name: Microsoft
+            - symbol: TSLA
+              name: Tesla
+ 
+      - search:
+          provider: google
+          target: _blank
+ 
       EOF
-      # FIN DU FICHIER settings.yaml
+      # FIN widgets.yaml
       # ---------------------------------------------------------------------------
-
-
-      # ###########################################################
-      # Fichier de configuration des bookmarks
-      # ###########################################################
-      cat > /data/bookmarks.yaml << 'EOF'
+ 
+      # ---------------------------------------------------------------------------
+      # SETTINGS.yaml
+      # ---------------------------------------------------------------------------
+      cat > /data/settings.yaml << EOF
       ---
-
+      title: Dashboard
+      theme: dark
+      color: slate
+      headerStyle: clean
+ 
+      layout:
+        Applications du projet:
+          style: row
+          columns: 4
+        Gestion des conteneurs:
+          style: row
+          columns: 4
+ 
       EOF
-      # FIN DU FICHIER bookmarks.yaml
+      # FIN settings.yaml
       # ---------------------------------------------------------------------------
-
-      # ###########################################################
-      # Fichier de configuration du serveur Docker
-      # ###########################################################
-      # Requis pour le widget Docker
-      cat > /data/docker.yaml << 'EOF'
+ 
+      # ---------------------------------------------------------------------------
+      # DOCKER.yaml
+      # ---------------------------------------------------------------------------
+      cat > /data/docker.yaml << EOF
       ---
       my-docker:
-        socket: /var/run/docker.sock      
+        socket: /var/run/docker.sock
       EOF
-      # FIN DU FICHIER docker.yaml
+      # FIN docker.yaml
       # ---------------------------------------------------------------------------
-
-
-      # ###########################################################
-      # Fichier de configuration des widgets
-      # ###########################################################
-      cat > /data/widgets.yaml << 'EOF'
+      #---------------------------------------------------------------------
+      # BOOKMARKS.yaml
+      #---------------------------------------------------------------------
+      cat > /data/bookmarks.yaml << EOF
       ---
-
+      - Liens Rapides:
+          - Docker Hub:
+              - abbr: DH
+                href: https://hub.docker.com
+          - Dépôt du projet:
+              - abbr: GH
+                href: https://github.com
+ 
       EOF
-      # FIN DU FICHIER widgets.yaml
+      # FIN bookmarks.yaml
       # ---------------------------------------------------------------------------
-
-      echo 'Configuration terminée avec succès!' 
+ 
+      echo 'Configuration terminée avec succès!'
       "
     restart: "no"
-    
     networks:
-      - projet_network    
+      - projet_network
   # Fin du conteneur d'initialisation pour Homepage

@@ -1,5 +1,4 @@
 services:
-  # Application Homepage qui attend que l'init soit terminé avant de démarrer
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
@@ -13,6 +12,23 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=*
+      # Infos générales
+      - HOMEPAGE_VAR_HOST_IP=${HOST_IP}
+      - HOMEPAGE_VAR_URL_PHOTO=${URL_PHOTO}
+      # Météo
+      - HOMEPAGE_VAR_METEO_VILLE=${METEO_VILLE}
+      - HOMEPAGE_VAR_METEO_LAT=${METEO_LAT}
+      - HOMEPAGE_VAR_METEO_LONG=${METEO_LONG}
+      # Ports des services
+      - HOMEPAGE_VAR_PIHOLE_HTTP_PORT=${PIHOLE_HTTP_PORT}
+      - HOMEPAGE_VAR_PIHOLE_PASSWORD=${PIHOLE_PASSWORD}
+      - HOMEPAGE_VAR_NGINX_PORT=${NGINX_PORT}
+      - HOMEPAGE_VAR_WORDPRESS_PORT=${WORDPRESS_PORT}
+      - HOMEPAGE_VAR_PHPMYADMIN_PORT=${PHPMYADMIN_PORT}
+      - HOMEPAGE_VAR_ARCANE_PORT=${ARCANE_PORT}
+      - HOMEPAGE_VAR_PORTAINER_HTTP_PORT=${PORTAINER_HTTP_PORT}
+      - HOMEPAGE_VAR_UPTIMEKUMA_PORT=${UPTIMEKUMA_PORT}
+      - HOMEPAGE_VAR_DOCKMON_PORT=${DOCKMON_PORT}
     depends_on:
       homepage-init:
         condition: service_completed_successfully
