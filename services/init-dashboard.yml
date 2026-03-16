@@ -8,10 +8,9 @@
 # ----------------------------------------------------------------------------------------------
 # Mise à jour par: (Marcus Asfaw)
 # Date de mise à jour: (2026-03-13)
-# Description de la mise à jour: Le fichier init-dashboard ici sert à initialiser la configuration de base pour le service Homepage.
+# Description de la mise à jour: (Le fichier init-dashboard ici sert à initialiser la configuration de base pour le service Homepage.
 # Il crée les fichiers de configuration nécessaires tels que services.yaml, widgets.yaml, settings.yaml, docker.yaml et bookmarks.yaml 
-# ces fichiers contiennent les paramètres et les liens pour les différents service 
-# Pas besoin de remplir les fichiers services.yml ou settings.yml etc. Parce que le ini-dashboard crée tout dans un fichier!!
+# ces fichiers contiennent les paramètres et les liens pour les différents service)
 # ----------------------------------------------------------------------------------------------
 
 services:
