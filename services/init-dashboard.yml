@@ -1,7 +1,7 @@
 # ----------------------------------------------------------------------------------------------
 # Fichier:  init-dashboard.yml
 # Projet:   4204D4 H26 TP01
-# Auteur:   Alain Boudreault
+# Auteur:  Marcus Asfaw
 # Date:     2026.01.11
 # ----------------------------------------------------------------------------------------------
 # Gabarit de départ pour l'initialisation de la configuration du service Homepage
@@ -240,7 +240,7 @@ services:
       # FIN bookmarks.yaml
       # ---------------------------------------------------------------------------
  
-      echo 'Configuration terminée avec succès!'
+      
       "
     restart: "no"
     networks:
